@@ -1,13 +1,14 @@
 
 
 import { WebSocketServer } from 'ws';
+import { gameController } from './gameController';
 const ws = new WebSocketServer({ port: 8080 });
 
-ws.on('connection', function connection(ws) {
-    ws.on('error', console.error);
+const game = new gameController();
 
+ws.on('connection', function connection(ws) {
     ws.on('message', function message(data) {
-        console.log('received: %s', data);
+        game.addUsers(ws,data)
     });
-    ws.send('something')
+    ws.on('disconnect', () =>game.removeFromGame(ws));
 });
